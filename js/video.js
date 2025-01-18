@@ -1,5 +1,22 @@
 console.log('video script added')
 
+
+function getTimeString(time){
+    //get hour and rest seconds
+    const hour = parseInt(time/3600);
+    let remainingSecond = time % 3600;
+    const minute = parseInt(remainingSecond / 60);
+    const second = remainingSecond % 60;
+    return `${hour} hour ${minute} minute ${second} second ago`
+}
+
+ const removeActiveClass = () =>{
+  const buttons = document.getElementsByClassName("category-btn");
+  console.log(buttons);
+  for(let btn of buttons){
+     btn.classList.remove("active");
+  }
+ }
 // 1. Fetch , Load and show Categories on HTML
 
 //create loadCategories
@@ -18,6 +35,49 @@ const loadVideos = () =>{
     .then(data => displayVideos(data.videos))
     .catch((error) => console.error(error))
 };
+
+const loadCategoryVideos = (id) =>{
+//    alert(id);
+    fetch(`https://openapi.programming-hero.com/api/phero-tube/category/${id}`)
+   .then((res) => res.json())
+   .then((data) =>{
+   //shobaike active class remove korao
+    removeActiveClass();  
+
+    //id er class ke active korao
+    const activeBtn = document.getElementById(`btn-${id}`);
+    activeBtn.classList.add("active");
+    displayVideos(data.category);
+   })
+   .catch((error) => console.error(error))
+
+};
+
+   const loadDetails = async (videoId) =>{
+      console.log(videoId);
+      const uri = `https://openapi.programming-hero.com/api/phero-tube/video/${videoId}`;
+      const res = await fetch(uri);
+      const data = await res.json();
+      console.log(data);
+      displayDetails(data.video);
+   };
+   const displayDetails = (video) =>{
+       console.log(video);
+       const detailContainer = document.getElementById("modal-content");
+    
+       detailContainer.innerHTML = `
+       <img src=${video.thumbnail} />
+       <p>${video.description}</p>
+       `
+    //  way-1 
+    //  document.getElementById("showModalData").click();
+
+    //way -2 
+    document.getElementById("customModal").showModal();
+
+
+
+   };
 
 // Card demo   Unnecessary part start
 // const cardDemo = {
@@ -43,7 +103,20 @@ const loadVideos = () =>{
 
 
 const displayVideos = (videos) =>{
-    const videoContainer = document.getElementById('videos')
+    const videoContainer = document.getElementById('videos');
+    videoContainer.innerHTML = "";
+
+  if(videos.length == 0 ){
+     videoContainer.classList.remove('grid');
+     videoContainer.innerHTML = `<div class="min-h-[300px] w-full  flex flex-col gap-5 justify-center items-center"> <img  src="../assets/Icon.png" /> 
+     <h2 class="text-center text-xl font-bold">No content here in this category</h2>
+     </div>`;
+     return;
+  }
+  else{
+    videoContainer.classList.add('grid');
+  }
+ 
      videos.forEach( video => {
        console.log(video);
        const card = document.createElement("div");
@@ -54,7 +127,7 @@ const displayVideos = (videos) =>{
     <img class =" h-full w-full object-cover"
       src=${video.thumbnail}
       alt="Shoes" />
-     ${video.others.posted_date?.length == 0 ? "" : `  <span class="absolute right-2 bottom-2  bg-black text-white py-1 px-2 rounded-md">${video.others.posted_date}</span>`
+     ${video.others.posted_date?.length == 0 ? "" : `  <span class="absolute right-2 bottom-2  bg-black text-white text-xs py-1 px-2 rounded-md">${getTimeString(video.others.posted_date)}</span>`
     }
     
   </figure>
@@ -70,7 +143,7 @@ const displayVideos = (videos) =>{
     ${video.authors[0].verified == true ? `<img class="w-5" src="https://img.icons8.com/?size=96&id=SRJUuaAShjVD&format=png" />` : ""}
 
      </div>
-    <p> </p>
+    <p> <button onclick="loadDetails('${video.video_id}')" class="btn btn-sm btn-error">details</button> </p>
     </div>
     </div>
   </div>
@@ -88,12 +161,15 @@ const displayVideos = (videos) =>{
      console.log(item);
     //create a button
 
-    const button = document.createElement("button");
-    button.classList = "btn";
-    button.innerText = item.category;
+    const buttonContainer  = document.createElement("div");
+    buttonContainer.innerHTML = `
+    <button id="btn-${item.category_id}" onclick="loadCategoryVideos(${item.category_id})" class="btn category-btn">
+    ${item.category}
+    </button>
+    `;
 
     // add button to category container 
-    categoryContainer.append(button);
+    categoryContainer.append(buttonContainer);
    });
 };
 
