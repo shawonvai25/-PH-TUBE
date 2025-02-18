@@ -179,3 +179,6 @@ document.getElementById("search-input").addEventListener("keyup", (e) =>{
 });
 loadCategories();
 loadVideos();
+
+
+//condition stock
