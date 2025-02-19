@@ -1,21 +1,21 @@
-// const isVerified = true;
+// const isVerified = false;
 
-// // if(isVerified == true){
-// //     console.log("user is verified");
+// // if (isVerified == true){
+// //     console.log("user is verified")
 // // }
 // // else{
 // //     console.log("user is not verified")
 // // }
-// console.log(`${isVerified === true ? "user is verified" : "user is not verified"}`);
+
+// console.log(`${isVerified === true ? "User is verified" :"user gone "}`);
 
 
 function getTimeString(time){
-    //get hour and rest seconds
+    // get hour and rest seconds
     const hour = parseInt(time/3600);
     let remainingSecond = time % 3600;
-    const minute = parseInt(remainingSecond / 60);
+    const minute = parseInt(remainingSecond/60);
     const second = remainingSecond % 60;
-    return `${hour} hour ${minute} minute ${second} second ago`
+    return `${hour} hour ${minute} minute ${second} second ago`;
 }
-
-console.log(getTimeString(7865));
+console.log(getTimeString(7865))
