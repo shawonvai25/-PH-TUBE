@@ -38,7 +38,7 @@ videos.forEach((video) => {
   <img class="h-full w-full object-cover"
     src=${video.thumbnail}
     alt="Shoes" />
-    ${ video.others.posted_date?.length == 0 ? "": `<span class="absolute bg-black rounded p-1 text-white bottom-2 right-2">${getTimeString(video.others.posted_date)}</span> `
+    ${ video.others.posted_date?.length == 0 ? "": `<span class="absolute bg-black rounded p-1 text-white bottom-2 right-2 text-xs">${getTimeString(video.others.posted_date)}</span> `
 
     }
 
@@ -65,6 +65,15 @@ ${video.authors[0].verified == true ? `<img class="w-5" src="https://img.icons8.
 });
 };
 
+//loadCategory videos
+const loadCategoryVideos = (id) => {
+   fetch(`https://openapi.programming-hero.com/api/phero-tube/category/${id}`)
+   .then((res) => res.json())
+   .then(data => console.log (data.category))
+   .catch((error) => console.log(error))
+};
+
+
 
 //create displayCategories 
 const displayCategories = (categories) =>{
@@ -74,12 +83,16 @@ const displayCategories = (categories) =>{
       console.log(item);
 
   //create a button
-  const button = document.createElement("button");
-  button.classList = "btn";
-  button.innerText = item.category;
-
+  const buttonContainer  = document.createElement("div");
+   buttonContainer.innerHTML = 
+   `
+    <button class="btn" onclick="loadCategoryVideos(${item.category_id})">
+    ${item.category}
+    </button>
+   `
+ 
   //add button to category container
-  categoryContainer.append(button);
+  categoryContainer.append(buttonContainer);
     });
 
   
